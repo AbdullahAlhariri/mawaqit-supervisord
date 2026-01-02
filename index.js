@@ -5,6 +5,7 @@ const { spawn } = require('child_process');
 const url = 'https://mawaqit.net/api/2.0/mosque/7bc92d3c-807d-4fd1-9bea-2d5298ab0e93/prayer-times';
 const cache = new Map();
 let azanPlaying = false;
+let volumeScaler = 1;
 
 setInterval(async () => {
     console.log(`Daemon is living: ${new Date().toLocaleString()}`);
@@ -59,7 +60,9 @@ function azan(fajr=false) {
     azanPlaying = true;
 
     const file = fajr ? 'fajr' : 'regular';
-    spawn('ffplay', ['-nodisp', '-autoexit', __dirname + `/azan/${file}.mp3`]);
+    const volume = (fajr ? '8' : '1') * volumeScaler;
+    // const volume = '10';
+    spawn('ffplay', ['-nodisp', '-volume', volume, '-autoexit', __dirname + `/azan/${file}.mp3`]);
 }
 
 function getMinutesToNextTime(times) {
