@@ -47,7 +47,6 @@ setInterval(async () => {
 
 function azanOnDemand(prayers) {
     const [minutesUntilNext, minTime] = getMinutesToNextTime(prayers);
-    console.log(minutesUntilNext)
     if (minutesUntilNext === 0) {
         azan(prayers.indexOf(minTime) === 0)
     }
