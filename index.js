@@ -54,7 +54,7 @@ function azanOnDemand(prayers) {
         case 0:
             azan(prayers.indexOf(minTime) === 0)
             break;
-        case 15:
+        case 5:
             if (prayers.indexOf(minTime) === 0) {
                 reboot()
             }
@@ -106,5 +106,5 @@ function reboot() {
         return;
     }
 
-    spawn('sudo', ['reboot']);
+    spawn('reboot');
 }
