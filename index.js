@@ -5,7 +5,8 @@ const { spawn } = require('child_process');
 const url = 'https://mawaqit.net/api/2.0/mosque/7bc92d3c-807d-4fd1-9bea-2d5298ab0e93/prayer-times';
 const cache = new Map();
 let azanPlaying = false;
-let volumeScaler = 1;
+let volumeScaler = 20;
+let rebootEnabled = true;
 
 setInterval(async () => {
     console.log(`Daemon is living: ${new Date().toLocaleString()}`);
@@ -48,8 +49,15 @@ setInterval(async () => {
 
 function azanOnDemand(prayers) {
     const [minutesUntilNext, minTime] = getMinutesToNextTime(prayers);
-    if (minutesUntilNext === 0) {
-        azan(prayers.indexOf(minTime) === 0)
+
+    switch (minutesUntilNext) {
+        case 0:
+            azan(prayers.indexOf(minTime) === 0)
+            break;
+        case 15:
+            if (prayers.indexOf(minTime) === 0) {
+                reboot()
+            }
     }
 }
 
@@ -60,8 +68,7 @@ function azan(fajr=false) {
     azanPlaying = true;
 
     const file = fajr ? 'fajr' : 'regular';
-    const volume = (fajr ? '8' : '1') * volumeScaler;
-    // const volume = '10';
+    const volume = (fajr ? '4' : '1') * volumeScaler;
     spawn('ffplay', ['-nodisp', '-volume', volume, '-autoexit', __dirname + `/azan/${file}.mp3`]);
 }
 
@@ -92,4 +99,12 @@ function getMinutesToNextTime(times) {
     }
 
     return [minDiff, minTime];
+}
+
+function reboot() {
+    if (!rebootEnabled) {
+        return;
+    }
+
+    spawn('sudo', ['reboot']);
 }
