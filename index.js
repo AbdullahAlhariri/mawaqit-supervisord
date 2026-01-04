@@ -66,7 +66,7 @@ function azan(fajr=false) {
         return;
     }
     azanPlaying = true;
-    setInterval(() => {
+    setTimeout(() => {
         azanPlaying = false;
         console.log('Azan ended, lock removed')
     }, 5 * 60 * 1000); // 5 minutes lock
@@ -75,7 +75,8 @@ function azan(fajr=false) {
     const file = fajr ? 'fajr' : 'regular';
     const volume = (fajr ? '4' : '1') * volumeScaler;
     spawn('pactl', ['set-sink-volume', '@DEFAULT_SINK@', '100%'])
-    spawn('ffplay', ['-nodisp', '-volume', volume, '-autoexit', __dirname + `/azan/${file}.mp3`]);
+    // spawn('ffplay', ['-nodisp', '-volume', volume, '-autoexit', __dirname + `/azan/${file}.mp3`]);
+    spawn('ffplay', ['-volume', volume, '-autoexit', __dirname + `/azan/${file}.mp3`]);
 }
 
 function getMinutesToNextTime(times) {
