@@ -69,19 +69,20 @@ function azan(fajr=false) {
     setTimeout(() => {
         azanPlaying = false;
         console.log('Azan ended, lock removed')
+        console.log('Restarting supervisor to reset volume') // bug
+        spawn('sudo', ['supervisor', 'restart', 'all']);
     }, 5 * 60 * 1000); // 5 minutes lock
     console.log('Azan playing, lock created')
 
     const file = fajr ? 'fajr' : 'regular';
     const volume = (fajr ? '4' : '1') * volumeScaler;
     spawn('pactl', ['set-sink-volume', '@DEFAULT_SINK@', '100%'])
-    // spawn('ffplay', ['-nodisp', '-volume', volume, '-autoexit', __dirname + `/azan/${file}.mp3`]);
-    spawn('ffplay', ['-volume', volume, '-autoexit', __dirname + `/azan/${file}.mp3`]);
+    spawn('ffplay', ['-nodisp', '-volume', volume, '-autoexit', __dirname + `/azan/${file}.mp3`]);
 }
 
 function getMinutesToNextTime(times) {
     // const now = new Date('02-01-2026 12:45:30');
-    // const now = new Date('02-01-2026 7:17:30');
+    // const now = new Date('02-01-2026 7:02:30');
     const now = new Date();
 
     const currentMinutes = now.getHours() * 60 + now.getMinutes();
