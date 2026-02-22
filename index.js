@@ -72,8 +72,6 @@ function azan(fajr=false) {
     setTimeout(() => {
         azanPlaying = false;
         console.log('Azan ended, lock removed')
-        console.log('Restarting supervisor to reset volume') // bug
-        spawn('sudo', ['supervisor', 'restart', 'all']);
     }, 5 * 60 * 1000); // 5 minutes lock
     console.log('Azan playing, lock created')
 
