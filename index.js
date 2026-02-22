@@ -2,7 +2,7 @@ const https = require('https');
 const { spawn } = require('child_process');
 
 // State
-const url = 'https://mawaqit.net/api/2.0/mosque/7bc92d3c-807d-4fd1-9bea-2d5298ab0e93/prayer-times';
+const url = 'https://mawaqit.net/nl/attaqwa-etten-leur'
 const cache = new Map();
 let azanPlaying = false;
 let volumeScaler = 20;
@@ -23,14 +23,17 @@ setInterval(async () => {
     }
 
     https.get(url, (res) => {
-        let data = '';
+        let html = '';
 
         res.on('data', chunk => {
-            data += chunk;
+            html += chunk;
         });
 
         res.on('end', () => {
             try {
+                const re = new RegExp(/^.*confData\s*=\s*(?<confData>.*);$/m);
+                const data = re.exec(html).groups['confData']
+
                 const json = JSON.parse(data);
                 const prayers = json['calendar'][month][day]
                 prayers.splice(1,1)
