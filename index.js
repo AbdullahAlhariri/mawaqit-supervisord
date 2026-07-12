@@ -5,6 +5,7 @@ const { spawn } = require('child_process');
 const url = 'https://mawaqit.net/nl/attaqwa-etten-leur'
 const cache = new Map();
 let azanPlaying = false;
+let bellPlaying = false;
 let volumeScaler = 20;
 let rebootEnabled = true;
 
@@ -61,6 +62,9 @@ function azanOnDemand(prayers) {
             if (prayers.indexOf(minTime) === 0) {
                 reboot()
             }
+            break;
+        case 10:
+            bell()
     }
 }
 
@@ -79,6 +83,21 @@ function azan(fajr=false) {
     const volume = (fajr ? '4' : '1') * volumeScaler;
     spawn('pactl', ['set-sink-volume', '@DEFAULT_SINK@', '100%'])
     spawn('ffplay', ['-nodisp', '-volume', volume, '-autoexit', __dirname + `/azan/${file}.mp3`]);
+}
+
+function bell() {
+    if (bellPlaying) {
+        return;
+    }
+    bellPlaying = true;
+    setTimeout(() => {
+        bellPlaying = false;
+        console.log('Bell ended, lock removed')
+    }, 2 * 60 * 1000); // 2 minutes lock
+    console.log('Bell playing, lock created')
+
+    spawn('pactl', ['set-sink-volume', '@DEFAULT_SINK@', '100%'])
+    spawn('ffplay', ['-nodisp', '-volume', volumeScaler, '-autoexit', __dirname + '/azan/bell.wav']);
 }
 
 function getMinutesToNextTime(times) {
