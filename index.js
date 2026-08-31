@@ -8,6 +8,7 @@ let azanPlaying = false;
 let bellPlaying = false;
 let volumeScaler = 20;
 let rebootEnabled = true;
+let monitorsOffScheduled = false;
 
 setInterval(async () => {
     console.log(`Daemon is living: ${new Date().toLocaleString()}`);
@@ -57,6 +58,9 @@ function azanOnDemand(prayers) {
     switch (minutesUntilNext) {
         case 0:
             azan(prayers.indexOf(minTime) === 0)
+            if (prayers.indexOf(minTime) === 4) {
+                monitorsOff()
+            }
             break;
         case 5:
             if (prayers.indexOf(minTime) === 0) {
@@ -128,6 +132,20 @@ function getMinutesToNextTime(times) {
     }
 
     return [minDiff, minTime];
+}
+
+function monitorsOff() {
+    if (monitorsOffScheduled) {
+        return;
+    }
+    monitorsOffScheduled = true;
+    console.log('Monitors off scheduled in 5 minutes')
+
+    setTimeout(() => {
+        monitorsOffScheduled = false;
+        console.log('Turning monitors off')
+        spawn('/home/abdullah/bin/monitors_off.sh', { stdio: 'ignore' });
+    }, 5 * 60 * 1000);
 }
 
 function reboot() {
