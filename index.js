@@ -100,7 +100,7 @@ function bell() {
     }, 2 * 60 * 1000); // 2 minutes lock
     console.log('Bell playing, lock created')
 
-    const volume = 4 * volumeScaler;
+    const volume = 2 * volumeScaler;
     spawn('pactl', ['set-sink-volume', '@DEFAULT_SINK@', '100%'])
     spawn('ffplay', ['-nodisp', '-volume', volume, '-autoexit', __dirname + '/azan/buzzer.wav']);
 }
